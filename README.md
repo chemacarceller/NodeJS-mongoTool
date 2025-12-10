@@ -1,6 +1,6 @@
 # NodeJS-mongoTool
 
-This is the development of a Nodejs module that works on Mongoose to allow the management of primary keys and auto-incrementing fields within a collection
+This is the development of a Nodejs module that works on mongoose to allow the management of primary keys and auto-incrementing fields within a collection
 
 It consists of an exported class named mongoTool to which the mongoose object must be passed in the constructor once the connection with the database has been made
 
