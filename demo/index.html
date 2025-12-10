@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
+    <title>mongoTool DEMO</title>
+  </head>
+  <body class="container mt-5">
+    <h1 class="text-center mb-4">mongoTool DEMO</h1>
+    <div class="card p-3 mb-4 shadow-sm">
+      <h2 id="form-title">Añadir Usuario</h2>
+      <input type="hidden" id="user-id">
+      <div class="row g-2">
+        <div class="col-md-4">
+          <input type="text" id="nombre" class="form-control" placeholder="Nombre">
+        </div>
+        <div class="col-md-4">
+          <input type="text" id="email" class="form-control" placeholder="Email">
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-success w-200" id="submit-btn">Añadir</button>
+        </div>
+      </div>
+    <button class="btn btn-secondary mt-2 d-none" id="cancel-btn">Cancelar</button>
+    </div>
+    <div class="card p-3 shadow-sm">
+      <h2>Lista de Usuarios</h2>
+      <ul id="list-usuarios" class="list-group"></ul>
+    </div>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>
