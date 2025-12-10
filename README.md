@@ -20,4 +20,4 @@ If it cannot be inserted, the folloeing message is received : "The document you 
 
 The same applies to the update method; the data will only be updated if it does not violate the restrictions of the primary key.
 
-If it cannot be updated, the folloeing message is received : "The document you are trying to insert already exists with regard to primary keys"
+If it cannot be updated, the folloeing message is received : "The document you are trying to update is not possible with regard to primary keys."
