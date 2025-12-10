@@ -4,7 +4,7 @@ This is the development of a Nodejs module that works on mongoose to allow the m
 
 It consists of an exported class named mongoTool to which the mongoose object must be passed in the constructor once the connection with the database has been made
 
-Once an object of this class is created, there are two public methods, insert and update, to add or modify a document to the collection, passing the name of an auto-incrementing field and an array with the fields that act together as the primary key.
+Once an object of this class is created, there are two public methods, insert and update, to add or modify a document to the collection, passing the name of an auto-incrementing field and an array with the fields that act together as the primary key; the update method does not receive the auto-incrementing field as is logical
 
 If you do not have an auto-incrementing field, simply pass the empty string.
 
