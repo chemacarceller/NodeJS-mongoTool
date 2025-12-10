@@ -2,16 +2,15 @@
 
 This is the development of a Nodejs module that works on Mongoose to allow the management of primary keys and auto-incrementing fields within a collection
 
-The demo folder contains an example of usage of this component
+It consists of an exported class named mongoTool to which the mongoose object must be passed in the constructor once the connection with the database has been made
 
-Also this component has been tested in https://jocarpe.itch.io/third-person-character-demo
+Once an object of this class is created, there are two public methods, insert and update, to add or modify a new document to the collection, passing the name of an auto-incrementing field and an array with the fields that act together as the primary key.
 
-This is a demo in continuous development to test all the components developed and in the process of future development. 
+If you do not have an auto-incrementing field, simply pass the empty string.
 
-It also adds the ability to change characters and view resource consumption via a plugin. 
+If you don't have primary keys, simply pass an empty array.
 
-A detailed explanation of how the demo works is available on the itch.io page indicated. 
+The insert method will also receive the document to be inserted and the mongoose model to which it belongs.
 
-Feel free to check it out in either of its two versions, Windows or Linux.
+The update method will also receive an array with the fields to be modified and another array with the modifications in the same order in which the fields were placed in the previous array; it will also receive an array with the fields and values ​​that define the filtering condition for the update
 
-The same demo is available for First Person Character in https://jocarpe.itch.io/godots-first-person
