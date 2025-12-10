@@ -12,7 +12,7 @@ If you don't have primary keys, simply pass an empty array.
 
 The insert method will also receive the document to be inserted and the mongoose model to which it belongs.
 
-The update method will also receive an array with the fields to be modified and another array with the modifications in the same order in which the fields were placed in the previous array; it will also receive an array with the fields and values ​​that define the filtering condition for the update
+The update method will also receive an array with the fields to be modified and another array with the modifications in the same order in which the fields were placed in the previous array; it will also receive two arrays with the fields and values ​​that define the filtering condition for the update action
 
 The insert method will retrieve the next value from the auto-incrementing field and add the document with this data to the collection but only if the primary key constraints are not violated.
 
