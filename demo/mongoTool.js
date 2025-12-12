@@ -44,7 +44,7 @@ class mongoTool {
                 // If it doesnt exist another document with the pks restriction
                 if (condicion == false) {        
                     // Saving the document
-                    return document.save()
+                    return document.save({runSettersOnQuery : true})
                     .then( result => resolve("Document added : " + result))
                     .catch( error => reject(error))
                 // The document already exists with regard to primary keys.
@@ -70,7 +70,7 @@ class mongoTool {
                     // If it doesnt exist another document with the pks restriction
                     if (condicion == false) {        
                         // Upadting the document
-                        return model.findOneAndUpdate( this.#genCondition(conditionFields, conditionValues), this.#genCondition(fields, values), {new : false})
+                        return model.findOneAndUpdate( this.#genCondition(conditionFields, conditionValues), this.#genCondition(fields, values), {new : false, runSettersOnQuery : true })
                         .then( result => resolve("Document updated : " + result))
                         .catch( error => reject(error))
                     // The document already exists with regard to primary keys.

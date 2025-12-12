@@ -6,17 +6,21 @@ const mongoose = require('mongoose');
 
 const { mongoTool } = require('./mongoTool.js');
 
+// The mongotool variable
 let mongotool = null;
 
+// The schema to access the usuarios collection
 let usuarioSchema = new mongoose.Schema({
     id : Number,
     nombre : String,
-    email : String
+    email : {type: String , lowercase: true}
 })
 
+// Assign the schema to the collection
 let usuarioModel = mongoose.model("usuarios", usuarioSchema);
 
-const PK = ["nombre", "email"];
+// Defining the primary keys combination for the usuarios collection
+const usuariosPK = ["nombre", "email"];
 
 function createWindow () {
   // Create the browser window.
@@ -41,7 +45,7 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
 
-  // Doing the connection
+  // Doing the connection to mongodb handling error
   mongoose.connect('mongodb://127.0.0.1:27017/db_usuarios',{ serverSelectionTimeoutMS: 2000 })
   .catch(error => { 
     dialog.showMessageBoxSync({
@@ -51,8 +55,10 @@ app.whenReady().then(() => {
     app.quit();  
   })
   .then ( () => {
-    // Once the connection is done
+    // Once the connection is done successful
+    // setting the mongotool variable
     mongotool = new mongoTool(mongoose);
+    // Throwing the window
     createWindow();
   });
 
@@ -66,11 +72,13 @@ app.whenReady().then(() => {
   // methods to be exported from the main process
   // all methods access the database directly without an API
   // all return a promise
+  // the mongoose method return a promise also
 
   ipcMain.handle('get-usuarios', () => {
     return new Promise ( (resolve, reject) => {
       usuarioModel.find().sort('id')
       .then( (data) => {
+        // the data must be converted to a JSON object
         resolve(JSON.parse(JSON.stringify(data)));
       })
       .catch( (error) => {
@@ -83,14 +91,15 @@ app.whenReady().then(() => {
   ipcMain.handle('add-usuario', async (event, usuario) => {
     return new Promise ( (resolve, reject) => {      
 
-      // Creating the new usuario
+      // Creating the new usuario form the input object usuario
       let usuarioNuevo = new usuarioModel( {
         nombre : usuario.nombre,
         email : usuario.email
       })
 
-      // Inserting the usuario
-      mongotool.insert(usuarioModel, usuarioNuevo, PK, "id")
+      // Inserting the usuario - passing the model, the newuser, the PKs of usuarios collection and the autoincrement field name (as string)
+      // Returns a promise with the result
+      mongotool.insert(usuarioModel, usuarioNuevo, usuariosPK, "id")
       .then( value => resolve(value))
       .catch ( error => reject(error));
     });
@@ -100,14 +109,19 @@ app.whenReady().then(() => {
   ipcMain.handle('edit-usuario', async (event, id, usuario) => {
     return new Promise ( (resolve, reject) => {
 
-      // Creating the update conditions
+      // Creating the update conditions for this update action
+      // fields name to be updated
       let fields = ["nombre", "email"];
+      // values of the fields to be updated in the same order as fields name
       let values = [usuario.nombre, usuario.email];
+      // condition fields name for the update sentence
       let conditionFields = ["id"];
+      // condition fields name values for the update sentence in the same order as the condition fields name are defined
       let conditionValues = [id];
 
-      // Updating the usuario
-      mongotool.update(usuarioModel, fields, values, conditionFields, conditionValues, PK)
+      // Updating the usuario - passing the model, the fields and values to be updated, the fields and values of the sentence condition and the PK fields for the usuario collection
+      // Returns a promise with the result
+      mongotool.update(usuarioModel, fields, values, conditionFields, conditionValues, usuariosPK)
       .then( value => resolve(value))
       .catch ( error => reject(error));
     });

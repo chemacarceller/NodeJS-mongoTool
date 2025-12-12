@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
 
                 let userText = document.createElement('span');
-                userText.textContent = `${usuario.id} - ${usuario.nombre} -${usuario.email}`;
+                userText.textContent = `${usuario.id} - ${usuario.nombre} - ${usuario.email}`;
 
                 let buttonContainer = document.createElement('div');
 
