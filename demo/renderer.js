@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('submit-btn').addEventListener('click', handleSubmit);
     document.getElementById('cancel-btn').addEventListener('click', resetForm);
-
+    
     cargarUsuarios();
 
     async function handleSubmit() {
@@ -27,15 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 await app.editUser(id, {nombre, email});
                 Swal.fire("Actualizado", "Usuario actualizado con éxito", "success");
-            } catch (err) {
-                Swal.fire("Error", err.message.substr(err.message.lastIndexOf('Error')), "error");
+            } catch (error) {
+                Swal.fire("Error", error.message.substring(error.message.lastIndexOf("Error")), "error");
             }
         } else {
             try {
                 await app.addUser({nombre, email});
                 Swal.fire("Añadido", "Usuario añadido con éxito", "success");
-            } catch (err) {
-                Swal.fire("Error", err.message.substr(err.message.lastIndexOf('Error')), "error");
+            } catch (error) {
+                Swal.fire("Error", error.message.substring(error.message.lastIndexOf("Error")), "error");
             }
         }
 
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listaUsuarios = document.getElementById('list-usuarios');
         listaUsuarios.innerHTML = '';
 
+
         app.loadUsers()
         .then( (usuarios) => {
 
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
 
                 let userText = document.createElement('span');
-                userText.textContent = `${usuario.id} - ${usuario.nombre} - ${usuario.email}`;
+                userText.textContent = `${usuario.id} - ${usuario.nombre} -${usuario.email}`;
 
                 let buttonContainer = document.createElement('div');
 
@@ -104,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 listaUsuarios.appendChild(li);
             });
         })
-        .catch( (error) => {
-            Swal.fire("Error", error.message.substr(error.message.lastIndexOf('Error')), "error");
+        .catch(( error) => {
+            Swal.fire("Error", error.message.substring(error.message.lastIndexOf("Error")), "error");
         })
     }
 
@@ -124,10 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     await app.deleteUser(id);
                     Swal.fire("Eliminado", "Usuario eliminado con éxito", "success");
-                } catch (err) {
-                    Swal.fire("Error", err.message.substr(err.message.lastIndexOf('Error')), "error");
+                    cargarUsuarios();
+                } catch (error) {
+                    Swal.fire("Error", error.message.substring(error.message.lastIndexOf("Error")), "error");
                 }
-                cargarUsuarios();
             }
         })
     }

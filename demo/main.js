@@ -1,18 +1,12 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog} = require('electron');
 const path = require('path');
 
 const mongoose = require('mongoose');
 
 const { mongoTool } = require('./mongoTool.js');
 
-try {
-  mongoose.connect("mongodb://localhost:27017/db_usuarios");
-} catch (err) {
-  app.quit();
-}
-
-let mongotool = new mongoTool(mongoose);
+let mongotool = null;
 
 let usuarioSchema = new mongoose.Schema({
     id : Number,
@@ -47,7 +41,20 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
 
-  createWindow();
+  // Doing the connection
+  mongoose.connect('mongodb://127.0.0.1:27017/db_usuarios',{ serverSelectionTimeoutMS: 2000 })
+  .catch(error => { 
+    dialog.showMessageBoxSync({
+      type : 'error',
+      message : error.message
+    });
+    app.quit();  
+  })
+  .then ( () => {
+    // Once the connection is done
+    mongotool = new mongoTool(mongoose);
+    createWindow();
+  });
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
