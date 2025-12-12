@@ -13,7 +13,7 @@ let mongotool = null;
 let usuarioSchema = new mongoose.Schema({
     id : Number,
     nombre : String,
-    email : {type: String , lowercase: true}
+    email : {type: String , unique : true, lowercase: true}
 })
 
 // Assign the schema to the collection
