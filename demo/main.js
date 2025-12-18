@@ -131,7 +131,7 @@ app.whenReady().then(() => {
   ipcMain.handle('delete-usuario', async (event, id) => {
     return new Promise ( (resolve, reject) => {
 
-      usuarioModel.deleteOne({id : id})
+      usuarioModel.deleteMany({id : id})
       .then( (resultado) => {
         if (resultado.deletedCount == 0) throw new Error("No se ha encontrado el registro para ser eliminado")
         else resolve("Eliminado con exito : " + resultado.deletedCount)

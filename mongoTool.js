@@ -59,24 +59,26 @@ class mongoTool {
             // Generate the modified document
             model.find(this.#genCondition(conditionFields, conditionValues))
             .then( (document) => {
-                fields.forEach ( (field, index) => {
-                    document[field] = values[index];
-                })
-                // Cheking if the modified document exist in its primary keys
-                let pkValues = [];
-                pks.forEach( element => pkValues.push(document[element]));
-                this.#existDocument(model, pks, pkValues)
-                .then( (condicion) => {
-                    // If it doesnt exist another document with the pks restriction
-                    if (condicion == false) {        
-                        // Upadting the document
-                        return model.findOneAndUpdate( this.#genCondition(conditionFields, conditionValues), this.#genCondition(fields, values), {new : false, runSettersOnQuery : true })
-                        .then( result => resolve("Document updated : " + result))
-                        .catch( error => reject(error))
-                    // The document already exists with regard to primary keys.
-                    } else reject("The document you are trying to update is not possible with regard to primary keys.");
-                })
-                .catch( error => reject(error));
+                if (document.length > 0) {
+                    fields.forEach ( (field, index) => {
+                        document[field] = values[index];
+                    })
+                    // Cheking if the modified document exist in its primary keys
+                    let pkValues = [];
+                    pks.forEach( element => pkValues.push(document[element]));
+                    this.#existDocument(model, pks, pkValues)
+                    .then( (condicion) => {
+                        // If it doesnt exist another document with the pks restriction
+                        if (condicion == false) {        
+                            // Upadting the document
+                            return model.findOneAndUpdate( this.#genCondition(conditionFields, conditionValues), this.#genCondition(fields, values), {new : false, runSettersOnQuery : true })
+                            .then( result => resolve("Document updated : " + result))
+                            .catch( error => reject(error))
+                        // The document already exists with regard to primary keys.
+                        } else reject("The document you are trying to update is not possible with regard to primary keys.");
+                    })
+                    .catch( error => reject(error));
+                } else reject("The document you are trying to update has not been found.");
             })
             .catch( error => reject(error));
         });
