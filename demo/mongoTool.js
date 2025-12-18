@@ -2,9 +2,17 @@ class mongoTool {
 
     // Contains the mongoose object already connected to the database
     #mongoose
+
+    // Establish the query condition
+    #condition
+
+    // Establish an error message
+    #error
     
     constructor(mongoose) {
         this.#mongoose = mongoose;
+        this.#condition = "";
+        this.#error = null;
     }
 
 
@@ -54,10 +62,13 @@ class mongoTool {
         })
     }
 
-    update(model, fields, values, conditionFields, conditionValues, pks = []) {
+    update(model, fields, values, pks = []) {
         return new Promise ( (resolve, reject) => {   
+            // If the where clause send an error we stop
+            if (this.#error != null) reject(error);
+            if (this.#condition == "") reject(new Error("The condition has not been passed"));
             // Generate the modified document
-            model.find(this.#genCondition(conditionFields, conditionValues))
+            model.find(this.#condition)
             .then( (document) => {
                 if (document.length > 0) {
                     fields.forEach ( (field, index) => {
@@ -71,7 +82,7 @@ class mongoTool {
                         // If it doesnt exist another document with the pks restriction
                         if (condicion == false) {        
                             // Upadting the document
-                            return model.findOneAndUpdate( this.#genCondition(conditionFields, conditionValues), this.#genCondition(fields, values), {new : false, runSettersOnQuery : true })
+                            return model.findOneAndUpdate( this.#condition, this.#genCondition(fields, values), {new : false, runSettersOnQuery : true })
                             .then( result => resolve("Document updated : " + result))
                             .catch( error => reject(error))
                         // The document already exists with regard to primary keys.
@@ -84,8 +95,32 @@ class mongoTool {
         });
     }
 
+    delete(model) {
+        return new Promise ( (resolve, reject) => {
+
+            // If the where clause send an error we stop
+            if (this.#error != null) reject(error);
+            if (this.#condition == "") reject(new Error("The condition has not been passed"));
+            // Ordering the delete action...
+            model.deleteMany(this.#condition)
+            .then( (resultado) => {
+                if (resultado.deletedCount == 0) reject("The document you are trying to delete has not been found.")
+                else resolve("Document sucessful deleted : " + resultado.deletedCount)
+            })
+            .catch( (error) => {
+                reject(new Error(error));
+            })
+        });
+    }
 
 
+    where(conditionFields, conditionValues) {
+        this.#error = null;
+        if (arguments.length < 1) this.#error = new Error("False argument call in where() function");
+        else if (arguments.length == 1) this.#condition = arguments[0]
+        else this.#condition = this. #genCondition(conditionFields, conditionValues);
+        return this;
+    }
 
 
 

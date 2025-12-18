@@ -121,7 +121,7 @@ app.whenReady().then(() => {
 
       // Updating the usuario - passing the model, the fields and values to be updated, the fields and values of the sentence condition and the PK fields for the usuario collection
       // Returns a promise with the result
-      mongotool.update(usuarioModel, fields, values, conditionFields, conditionValues, usuariosPK)
+      mongotool.where(conditionFields, conditionValues).update(usuarioModel, fields, values, usuariosPK)
       .then( value => resolve(value))
       .catch ( error => reject(error));
     });
@@ -131,14 +131,14 @@ app.whenReady().then(() => {
   ipcMain.handle('delete-usuario', async (event, id) => {
     return new Promise ( (resolve, reject) => {
 
-      usuarioModel.deleteMany({id : id})
-      .then( (resultado) => {
-        if (resultado.deletedCount == 0) throw new Error("No se ha encontrado el registro para ser eliminado")
-        else resolve("Eliminado con exito : " + resultado.deletedCount)
-      })
-      .catch( (error) => {
-        reject(new Error(error));
-      })
+      // condition fields name for the update sentence
+      let conditionFields = ["id"];
+      // condition fields name values for the update sentence in the same order as the condition fields name are defined
+      let conditionValues = [id];
+
+      mongotool.where(conditionFields, conditionValues).delete(usuarioModel)
+      .then( value => resolve(value))
+      .catch ( error => reject(error));
     });
   });
 });
