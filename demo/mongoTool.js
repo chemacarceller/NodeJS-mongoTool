@@ -48,9 +48,9 @@ class mongoTool {
             pks.forEach( element => values.push(document[element]));
             // Checking if the document already exist
             this.#existDocument(model, pks, values)
-            .then( condicion => {
+            .then( condition => {
                 // If it doesnt exist another document with the pks restriction
-                if (condicion == false) {        
+                if (condition == false) {        
                     // Saving the document
                     return document.save({runSettersOnQuery : true})
                     .then( result => resolve("Document added : " + result))
@@ -71,24 +71,74 @@ class mongoTool {
             model.find(this.#condition)
             .then( (document) => {
                 if (document.length > 0) {
-                    fields.forEach ( (field, index) => {
-                        document[field] = values[index];
-                    })
-                    // Cheking if the modified document exist in its primary keys
-                    let pkValues = [];
-                    pks.forEach( element => pkValues.push(document[element]));
-                    this.#existDocument(model, pks, pkValues)
-                    .then( (condicion) => {
-                        // If it doesnt exist another document with the pks restriction
-                        if (condicion == false) {        
-                            // Upadting the document
-                            return model.findOneAndUpdate( this.#condition, this.#genCondition(fields, values), {new : false, runSettersOnQuery : true })
-                            .then( result => resolve("Document updated : " + result))
-                            .catch( error => reject(error))
-                        // The document already exists with regard to primary keys.
-                        } else reject("The document you are trying to update is not possible with regard to primary keys.");
-                    })
-                    .catch( error => reject(error));
+                    // If there is only one document to update this is the easy case
+                    if (document.length == 1) {
+                        // Modifying the fields to be updated
+                        fields.forEach ( (field, index) => {
+                            document[field] = values[index];
+                        })
+                        // Cheking if the modified document exist in its primary keys
+                        let pkValues = [];
+                        pks.forEach( element => pkValues.push(document[element]));
+                        this.#existDocument(model, pks, pkValues)
+                        .then( (condicion) => {
+                            // If it doesnt exist another document with the pks restriction
+                            if (condicion == false) {        
+                                // Updating the document
+                                return model.findOneAndUpdate( this.#condition, this.#genJson(fields, values), {new : false, runSettersOnQuery : true })
+                                .then( result => resolve("Document updated : " + result))
+                                .catch( error => reject(error))
+                            // The document already exists with regard to primary keys.
+                            } else reject("The document you are trying to update is not possible with regard to primary keys.");
+                        })
+                        .catch( error => reject(error));
+                    } else {
+                        // There are more than one document to be update, this is the complex case
+                        // Getting all the documents of the collection
+                        model.find()
+                        .then( (result) => {
+                            // Getting the documents that fit the condition
+                            model.find(this.#condition)
+                            .then ( (document) => {
+                                // Modifying the documents that fit the condition in the result of all the documents
+                                result.forEach( (element) => {
+                                    document.forEach( (oneDocument) => {
+                                        if (JSON.stringify(element) === JSON.stringify(oneDocument) ) {
+                                            fields.forEach ( (field, index) => {
+                                                element[field] = values[index]
+                                            })
+                                        }
+                                    })
+                                })
+                                // Cheking if the modified document exist in its primary keys
+                                // Creating a Map for each document to be modified with the primary keys
+                                let pksMap = [];
+                                result.forEach( (oneDocument) => {
+                                    let theMap = new Map();
+                                    pks.forEach( element => {
+                                        theMap.set(element, oneDocument[element]);
+                                    })
+                                    pksMap.push(theMap);
+                                });
+                                // Passing the Map array
+                                // the existDocument method distingues between passing an array with values or an array with maps
+                                this.#existDocument(model, pks, pksMap)
+                                .then( (condition) => {
+                                    // If it is passed the condition restriction...
+                                    if (condition == false) {        
+                                        // Updating the document
+                                        return model.updateMany( this.#condition, this.#genJson(fields, values), {new : false, runSettersOnQuery : true })
+                                        .then( result => resolve("Document updated : " + result))
+                                        .catch( error => reject(error))
+                                    // The document already exists with regard to primary keys.
+                                    } else reject("The document you are trying to update is not possible with regard to primary keys.");
+                                })
+                                .catch( error => reject(error));
+                            })
+                            .catch( error => reject(error));
+                        })
+                        .catch( error => reject(error));
+                    }
                 } else reject("The document you are trying to update has not been found.");
             })
             .catch( error => reject(error));
@@ -118,7 +168,7 @@ class mongoTool {
         this.#error = null;
         if (arguments.length < 1) this.#error = new Error("False argument call in where() function");
         else if (arguments.length == 1) this.#condition = arguments[0]
-        else this.#condition = this. #genCondition(conditionFields, conditionValues);
+        else this.#condition = this.#genJson(conditionFields, conditionValues);
         return this;
     }
 
@@ -143,18 +193,35 @@ class mongoTool {
     // Return a promise
     #existDocument = async (model, pks=[], values=[]) =>  {
         try {
-            // If there is a pks array then action if not that means there is no primary key and the document is correct
-            if (pks.length > 0) {
-                // If the pks and values array have different length
-                if (pks.length != values.length) throw new Error("Incorrect call to the function that checks primary keys")
-                else {
-                    // Generate the condition
-                    let condition = this.#genCondition(pks, values);
-                    // Read the entire collection applying the condition
-                    let data = await model.find(condition);
-                    // If there is one document that fetch the condition return true otherwise false
-                    if (data.length > 0) return true;
-                    else return false;
+            // If there is a pks array and a values array then go forward
+            // If not return false
+            if ((pks.length  > 0) && (values.length > 0)) {
+                // Checking if it is passed an array of values or an array with Maps (manyUpdate case)
+                if (values[0] instanceof Map) {
+                    // Here it means we have to check the Map for repeated entries returning true or false
+                    const uniqueElements = new Set();
+                    values.forEach(item => {
+                        if (uniqueElements.has(JSON.stringify(Object.fromEntries(item)))) {
+                            return true;
+                        } else {
+                            uniqueElements.add(JSON.stringify(Object.fromEntries(item)));
+                        }
+                    });
+                    return false;
+                } else {
+                    // The values array stores the element of the database assigned to the pk of only one element
+                    // We check if it is right just searching for another element with the same pks generating previously the condition
+                    // If the pks and values array have different length
+                    if (pks.length != values.length) throw new Error("Incorrect call to the function that checks primary keys")
+                    else {
+                        // Generate the condition
+                        let condition = this.#genJson(pks, values);
+                        // Read the entire collection applying the condition
+                        let data = await model.find(condition);
+                        // If there is one document that fetch the condition return true otherwise false
+                        if (data.length > 0) return true;
+                        else return false;
+                    }
                 }
             // If there is no pks array whatever document is correct
             } else return false;
@@ -164,7 +231,7 @@ class mongoTool {
     }
 
     // Generates a JSON Object from two arrays one of fields and another of values
-    #genCondition = (fields=[], values=[]) =>  {
+    #genJson = (fields=[], values=[]) =>  {
         // Creating a map with the conditions values
         let entries = new Map();
         fields.forEach( (field, index) => {
