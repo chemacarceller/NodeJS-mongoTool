@@ -13,7 +13,7 @@ let mongotool = null;
 let usuarioSchema = new mongoose.Schema({
     id : Number,
     nombre : String,
-    email : {type: String , unique : true, lowercase: true}
+    email : {type: String , lowercase: true}
 })
 
 // Assign the schema to the collection
@@ -118,6 +118,14 @@ app.whenReady().then(() => {
       let conditionFields = ["id"];
       // condition fields name values for the update sentence in the same order as the condition fields name are defined
       let conditionValues = [id];
+
+
+      // Code line to test manyUpdate option
+      // Only email is updated for all the documents in the collection
+      // let fields = ["email"];
+      // let values = [usuario.email];
+      // let conditionFields = [""];
+      // let conditionValues = [];
 
       // Updating the usuario - passing the model, the fields and values to be updated, the fields and values of the sentence condition and the PK fields for the usuario collection
       // Returns a promise with the result

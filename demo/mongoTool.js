@@ -200,14 +200,16 @@ class mongoTool {
                 if (values[0] instanceof Map) {
                     // Here it means we have to check the Map for repeated entries returning true or false
                     const uniqueElements = new Set();
+                    const duplicatedElements = [];
                     values.forEach(item => {
                         if (uniqueElements.has(JSON.stringify(Object.fromEntries(item)))) {
-                            return true;
+                            duplicatedElements.push(item)
                         } else {
                             uniqueElements.add(JSON.stringify(Object.fromEntries(item)));
                         }
                     });
-                    return false;
+                    if (duplicatedElements.length > 0) return true;
+                    else return false;
                 } else {
                     // The values array stores the element of the database assigned to the pk of only one element
                     // We check if it is right just searching for another element with the same pks generating previously the condition
