@@ -11,7 +11,7 @@ class mongoTool {
     
     constructor(mongoose) {
         this.#mongoose = mongoose;
-        this.#condition = "";
+        this.#condition = "{}";
         this.#error = null;
     }
 
@@ -166,9 +166,9 @@ class mongoTool {
 
     where(conditionFields, conditionValues) {
         this.#error = null;
-        if (arguments.length < 1) this.#error = new Error("False argument call in where() function");
-        else if (arguments.length == 1) this.#condition = arguments[0]
-        else this.#condition = this.#genJson(conditionFields, conditionValues);
+        if (arguments.length > 0) 
+            if (arguments.length == 1) this.#condition = arguments[0]
+            else this.#condition = this.#genJson(conditionFields, conditionValues);
         return this;
     }
 
