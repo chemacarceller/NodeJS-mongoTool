@@ -16,11 +16,11 @@ If two parameters are passed, the first will be an array with the fields of the 
 
 For the `insert` method :
 
-If you do not have an auto-incrementing field, simply pass the empty string to the insert method
+If you do not have an auto-incrementing field, simply pass the empty string to the `insert` method
 
 For the `insert` and `update` method :
 
-If you don't have primary keys, simply pass an empty array to the insert or the update method
+If you don't have primary keys, simply pass an empty array to the `insert` or the `update` method
 
 The `insert` method will also receive the document to be inserted and the mongoose model to which it belongs.
 
