@@ -8,7 +8,7 @@ Once an object of this class (mongoTool class) is created, there are four public
 
 The `where` method it is simply used to specify the condition of an update or delete action. The `where` method must be called before the `update` or `delete` method in the same statement. These two methods are concatenated after the `where` method using dot notation, so the `where` method returns a `mongoTool` object with the specified condition. If the `where` method is not called, or if it is called without parameters, it indicates that there is no filtering condition in the `update` or `delete` action.
 
-It can receive one or two parameters
+The `where` method it can receive one or two parameters
 
 A single argument can be passed as a parameter, in which case it will be a JSON object that establishes the condition and that mongoose can understand.
 
