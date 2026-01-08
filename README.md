@@ -38,7 +38,7 @@ If it cannot be updated, the following message is received : "The document you a
 
 Finally, the `update` method supports updating both a single document and multiple documents, applying primary key constraints in both cases. The programmer doesn't need to specify which case they are in; the `update` method will detect whether the condition generates a single document or more than one, applying a different process in each case. The method applied to a single document is simpler and more efficient.
 
-==============================================================================================
+==========================================================================================
 
 Este es el desarrollo de un módulo Node.js que funciona con Mongoose para permitir la gestión de claves primarias y campos autoincrementables dentro de una colección.
 
