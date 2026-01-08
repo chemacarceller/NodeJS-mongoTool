@@ -34,6 +34,46 @@ If it cannot be inserted, the following message is received : "The document you 
 
 The same applies to the `update` method; the data will only be updated if it does not violate the restrictions of the primary key.
 
-If it cannot be `updated`, the following message is received : "The document you are trying to update is not possible with regard to primary keys."
+If it cannot be updated, the following message is received : "The document you are trying to update is not possible with regard to primary keys."
 
 Finally, the `update` method supports updating both a single document and multiple documents, applying primary key constraints in both cases. The programmer doesn't need to specify which case they are in; the `update` method will detect whether the condition generates a single document or more than one, applying a different process in each case. The method applied to a single document is simpler and more efficient.
+
+==============================================================================================
+
+Este es el desarrollo de un módulo Node.js que funciona con Mongoose para permitir la gestión de claves primarias y campos autoincrementables dentro de una colección.
+
+Consiste en una clase exportada llamada MongoTool, a la que se debe pasar un objeto mongoose en el constructor, pero es necesario que la conexión con la base de datos se haya establecido en el objeto mongoose.
+
+Una vez creado un objeto de esta clase (clase MongoTool), hay cuatro métodos públicos disponibles: `where`, `insert`, `update` y `delete`, para añadir, modificar o eliminar un documento de la colección, teniendo en cuenta las claves primarias definidas por el desarrollador y el uso de un único campo autoincrementable en la colección.
+
+El método `where` se utiliza simplemente para especificar la condición de una acción de actualización o eliminación. Debe llamarse antes que el método `update` o `delete` en la misma instrucción. Estos dos métodos se concatenan después del método `where` mediante notación de punto, por lo que el método `where` devuelve un objeto MongoTool con la condición especificada. Si no se llama al método `where`, o si se llama sin parámetros, indica que no hay ninguna condición de filtrado en la acción de actualización o eliminación.
+
+Para el método `where`:
+
+El método `where` puede recibir uno o dos parámetros.
+
+Se puede pasar un solo argumento como parámetro, en cuyo caso será un objeto JSON que establece la condición y que Mongoose puede comprender.
+
+Si se pasan dos parámetros, el primero será un array con los campos de la condición y el segundo con los valores de dichos campos en el mismo orden en que se establecieron en el array de campos. El método generará el objeto JSON que representa esta condición.
+
+Para el método `insert`:
+
+Si no tiene un campo autoincrementable, simplemente pase la cadena vacía al método `insert`.
+
+Para los métodos `insert` y `update`:
+
+Si no tiene claves primarias, simplemente pase un array vacío al método `insert` o `update`.
+
+El método `insert` también recibirá el documento que se va a insertar y el modelo de Mongoose al que pertenece.
+
+El método `update` también recibirá el modelo de Mongoose al que pertenece, un array con los campos que se van a modificar y otro array con las modificaciones en el mismo orden en que se colocaron los campos en el array anterior.
+
+El método `insert` recuperará el siguiente valor del campo autoincremental y añadirá el documento con estos datos a la colección, pero solo si no se infringen las restricciones de la clave primaria.
+
+Si no se puede insertar, se recibe el siguiente mensaje: "El documento que intenta insertar ya existe con respecto a las claves primarias".
+
+Lo mismo ocurre con el método `update`; los datos solo se actualizarán si no infringen las restricciones de la clave primaria.
+
+Si no se puede actualizar, se recibe el siguiente mensaje: "El documento que intenta actualizar no es posible con respecto a las claves primarias".
+
+Por último, el método `update` permite actualizar tanto un solo documento como varios, aplicando restricciones de clave primaria en ambos casos. El programador no necesita especificar en qué caso se encuentra; el método `update` detectará si la condición genera un solo documento o más, aplicando un proceso diferente en cada caso. El método aplicado a un solo documento es más simple y eficiente.
