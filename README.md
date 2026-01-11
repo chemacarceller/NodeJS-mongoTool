@@ -38,11 +38,7 @@ If it cannot be updated, the following message is received : "The document you a
 
 Finally, the `update` method supports updating both a single document and multiple documents, applying primary key constraints in both cases. The programmer doesn't need to specify which case they are in; the `update` method will detect whether the condition generates a single document or more than one, applying a different process in each case. The method applied to a single document is simpler and more efficient.
 
-The /demo1 folder contains a demonstration exercise for using this module.
-
-The compiled version of the module (mongoTool.jsc) is also provided, and the /demo2 folder contains the same demonstration exercise using the compiled version.
-
-The compiled version of the module was generated using bytenode version 1.5.7. The main.js file contains the command line that defines how the compiled file is generated.
+The /demo folder contains a demonstration exercise for using this module.
 
 ==========================================================================================
 
@@ -84,8 +80,4 @@ Si no se puede actualizar, se recibe el siguiente mensaje: "El documento que int
 
 Por último, el método `update` permite actualizar tanto un solo documento como varios, aplicando restricciones de clave primaria en ambos casos. El programador no necesita especificar en qué caso se encuentra; el método `update` detectará si la condición genera un solo documento o más, aplicando un proceso diferente en cada caso. El método aplicado a un solo documento es más simple y eficiente.
 
-La carpeta /demo1 tiene un ejercicio de demostración de uso de este módulo
-
-Se suministra también la versión compilada del módulo (mongoTool.jsc) y la carpeta /demo2 tiene el mismo ejercicio de demostración de uso del módulo pero utilizando la versión compilada
-
-La versión compilada del módulo se ha generado mediante la version 1.5.7 de bytenode. El fichero main.js tiene la línea comantada de cómo se genera el fichero compilado
+La carpeta /demo tiene un ejercicio de demostración de uso de este módulo
